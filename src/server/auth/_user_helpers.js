@@ -529,7 +529,7 @@ function updateProfile(req, res) {
 function getProfile(req, res) {
   console.log(`getProfile sess: ${JSON.stringify(sess)}`);
   console.log(`getProfile req.session: ${JSON.stringify(req.session)}`);
-  if (sess.passport.user === undefined) {
+  if (sess === undefined) {
     sess = req.session;
   }
   let userId = sess.passport.user;
