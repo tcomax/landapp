@@ -18,9 +18,9 @@ function getEarnings(req, res) {
     sess = req.session;
   }
   let query = baale('earnings')
-  .select(
-    '*'
-  ).returning(['*']);
+  .select('*')
+  .where('user_id','=',sess.passport.user)
+  .returning(['*']);
   // console.log(query.toString());
   return query.then((earnings) => {
     // console.log(`contact: ${JSON.stringify(cntctInfo)}`);

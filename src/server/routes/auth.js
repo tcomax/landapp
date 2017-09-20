@@ -48,6 +48,15 @@ router.get('/lands', authHelpers.loginRequired, (req, res, next)  => {
   return authLandHelpers.getLands(req, res);
 });
 
+router.get('/land/:landId', authHelpers.loginRequired, (req, res, next)  => {
+  return authLandHelpers.getLand(req, res);
+});
+
+router.get('/documents', authHelpers.loginRequired, (req, res, next)  => {
+  return authLandHelpers.getDocuments(req, res);
+  //res.status(200).send('test Docs');
+});
+
 router.get('/transactions', authHelpers.loginRequired, (req, res, next)  => {
   return authTransactionsHelpers.getTransactions(req, res);
 });
@@ -56,8 +65,8 @@ router.post('/transactions', authHelpers.loginRequired, (req, res, next)  => {
   return authTransactionsHelpers.createTransactions(req, res);
 });
 
-router.get('/portfolios', (req, res, next)  => {
-  return authPortfolioHelpers.getPortfolios(req, res);
+router.get('/portfolio', (req, res, next)  => {
+  return authTransactionsHelpers.getPortfolio(req, res);
 });
 
 router.get('/earnings', (req, res, next)  => {

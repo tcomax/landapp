@@ -13,12 +13,56 @@ var myConfig = new AWS.Config();
 myConfig.update({region: 'us-east-2'});
 const fileType = require('file-type');
 
+function getDocuments(req, res) {
+  console.log(`req.query ${JSON.stringify(req.query)}`);
+  console.log(`req.body ${JSON.stringify(req.body)}`);
+  console.log(`req.params ${JSON.stringify(req.params)}`);
+  //console.log(`sess: ${JSON.stringify(sess)}`);
+  if (!sess) {
+    sess = req.session;
+  }
+  let landId = 0;
+  let query = baale('documents')
+  .where('land_id', '=', '0')
+  .select('*')
+  .returning('*');
+  console.log(`${query}`);
+  return query.then((docs) => {
+    sess.docs = docs;
+    res.status(200).json({data: sess.docs, status: 'success'});
+  })
+  .catch((err) => {
+    res.status(400).json({status: err.message});
+  });
+}
+
 function getLands(req, res) {
-  console.log(`sess: ${JSON.stringify(sess)}`);
+  // console.log(`sess: ${JSON.stringify(sess)}`);
   if (!sess) {
     sess = req.session;
   }
   let query = baale('lands')
+  .select('id','location','description','price','area','available','owner_id AS ownerId')
+  .returning('id','location','description','price','area','available','ownerId');
+  console.log(`${query}`);
+  return query.then((lands) => {
+    sess.lands = lands;
+    res.status(200).json({data: sess.lands, status: 'success'});
+  })
+  .catch((err) => {
+    res.status(400).json({status: err.message});
+  });
+}
+
+function getLand(req, res) {
+  console.log(`req.query ${JSON.stringify(req.query)}`);
+  // console.log(`sess: ${JSON.stringify(sess)}`);
+  if (!sess) {
+    sess = req.session;
+  }
+  let id = req.query.id;
+  let query = baale('lands')
+  .where('id', '=', id)
   .select('id','location','description','price','area','available','owner_id AS ownerId')
   .returning('id','location','description','price','area','available','ownerId');
   console.log(`${query}`);
@@ -89,22 +133,6 @@ function getLand(req, res) {
   .where ('id', '=', landId)
   .select('id','location','description','price','area','available')
   .returning('id','location','description','price','area','available');
-  return query.then((lands) => {
-    sess.land = lands[0];
-    res.status(200).json({status: 'success'});
-  })
-  .catch((err) => {
-    res.status(400).json({status: err.message});
-  });
-}
-
-function getDocuments(req, res) {
-  // console.log(`sess: ${JSON.stringify(sess)}`);
-  let docId = sess.docId;
-  let query = baale('documents')
-  .where ('id', '=', docId)
-  .select('id','land_id','reg_no','type','issuer_id','owner_id','image_url','status')
-  .returning('id','land_id','reg_no','type','issuer_id','owner_id','image_url','status');
   return query.then((lands) => {
     sess.land = lands[0];
     res.status(200).json({status: 'success'});

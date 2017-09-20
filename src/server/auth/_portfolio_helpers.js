@@ -18,6 +18,7 @@ function getPortfolios(req, res) {
     sess = req.session;
   }
   let query = baale('portfolio')
+  .groupby
   .select(
     '*'
   ).returning(['*']);
